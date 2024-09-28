@@ -13,9 +13,9 @@
 
 //console.log(edad);
 
-//let nombreUsuario = prompt("ingrese su nombre");
+let nombreUsuario = prompt("ingrese su nombre");
 
-//alert("Hola " + nombreUsuario + ".");
+alert("Hola " + nombreUsuario + "," +  " " + "Pida un Prestamo");
 
 //let edad = prompt("Ingrese su edad");
 
@@ -64,36 +64,25 @@
 //let resultado = op1 + op2; 
 //console.log("Resultado vale: " + resultado);
 
-function gen_table(){
-    document.getElementById("tab").innerHTML="";
-    let n=Number(document.getElementById("capital").value);
-    let n2=Number(document.getElementById("couta").value);
-    let n3=Number(document.getElementById("interes").value);
-    if(n>0){   
-        for(i=1;i<=n2;i++){
-            ca=n/n2;
-            d1=ca.toFixed(2);
-            i2=((n*n3)/100)/n2;
-            d2=i2.toFixed(2);
-            r=ca+i2;
-            d3=r.toFixed(2);
-            document.getElementById("tab").innerHTML=document.getElementById("tab").innerHTML+
-                    `<tr>
-                        <td> ${i}</td>
-                        <td> ${d1}</td>
-                        <td> ${d2}</td>
-                        <td> ${d3}</td>
-                    </tr>`;
-        }
-        n1=n.toFixed(2);
-        t_i=i2*n2;
-        d4=t_i.toFixed(2);
-        t_p=r*n2;
-        d5=t_p.toFixed(2);
-        document.getElementById("t1").innerHTML=n1;
-        document.getElementById("t2").innerHTML=d4;
-        document.getElementById("t3").innerHTML=d5;        
-    }else{
-        alert("Falta ingresar un Número");
-    }
+
+// Función para calcular el pago mensual de un préstamo
+function calcularPagoMensual(monto, tasaInteres, meses) {
+    let tasaMensual = tasaInteres / 100 / 12;
+    let pagoMensual = (monto * tasaMensual) / (1 - Math.pow(1 + tasaMensual, -meses));
+    return pagoMensual;
 }
+
+// Función para manejar el cálculo al hacer clic en el botón
+document.getElementById('calcular').addEventListener('click', function() {
+    let monto = parseFloat(document.getElementById('monto').value);
+    let tasaInteres = parseFloat(document.getElementById('tasa').value);
+    let meses = parseInt(document.getElementById('meses').value);
+
+    if (isNaN(monto) || isNaN(tasaInteres) || isNaN(meses) || monto <= 0 || tasaInteres < 0 || meses <= 0) {
+        document.getElementById('resultado').innerText = "Por favor, ingrese valores válidos.";
+        return;
+    }
+
+    let pagoMensual = calcularPagoMensual(monto, tasaInteres, meses);
+    document.getElementById('resultado').innerText = `El pago mensual es: $${pagoMensual.toFixed(2)}`;
+});
