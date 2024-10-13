@@ -13,9 +13,9 @@
 
 //console.log(edad);
 
-let nombreUsuario = prompt("ingrese su nombre");
+//let nombreUsuario = prompt("ingrese su nombre");
 
-alert("Hola " + nombreUsuario + "," +  " " + "Pida un Prestamo");
+//alert("Hola " + nombreUsuario + "," +  " " + "Pida un Prestamo");
 
 //let edad = prompt("Ingrese su edad");
 
@@ -65,24 +65,33 @@ alert("Hola " + nombreUsuario + "," +  " " + "Pida un Prestamo");
 //console.log("Resultado vale: " + resultado);
 
 
-// Función para calcular el pago mensual de un préstamo
-function calcularPagoMensual(monto, tasaInteres, meses) {
-    let tasaMensual = tasaInteres / 100 / 12;
-    let pagoMensual = (monto * tasaMensual) / (1 - Math.pow(1 + tasaMensual, -meses));
-    return pagoMensual;
-}
+document.getElementById('loanForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-// Función para manejar el cálculo al hacer clic en el botón
-document.getElementById('calcular').addEventListener('click', function() {
-    let monto = parseFloat(document.getElementById('monto').value);
-    let tasaInteres = parseFloat(document.getElementById('tasa').value);
-    let meses = parseInt(document.getElementById('meses').value);
+    let amount = parseFloat(document.getElementById('amount').value);
+    let interest = parseFloat(document.getElementById('interest').value);
+    let years = parseInt(document.getElementById('years').value);
 
-    if (isNaN(monto) || isNaN(tasaInteres) || isNaN(meses) || monto <= 0 || tasaInteres < 0 || meses <= 0) {
-        document.getElementById('resultado').innerText = "Por favor, ingrese valores válidos.";
-        return;
-    }
+    
+    let monthlyInterest = interest / 100 / 12;
+    let numberOfPayments = years * 12;
 
-    let pagoMensual = calcularPagoMensual(monto, tasaInteres, meses);
-    document.getElementById('resultado').innerText = `El pago mensual es: $${pagoMensual.toFixed(2)}`;
+    let monthlyPayment = (amount * monthlyInterest) / (1 - Math.pow(1 + monthlyInterest, -numberOfPayments));
+
+    
+    let loanData = { amount, interest, years, monthlyPayment };
+    localStorage.setItem('loanData', JSON.stringify(loanData));
+
+    
+    let resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `La cuota mensual es: $${monthlyPayment.toFixed(2)} USD`;
 });
+
+
+window.onload = function() {
+    let savedLoan = localStorage.getItem('loanData');
+    if (savedLoan) {
+        let loanData = JSON.parse(savedLoan);
+        document.getElementById('result').innerHTML = `Última cuota mensual guardada: $${loanData.monthlyPayment.toFixed(2)} USD`;
+    }
+}
